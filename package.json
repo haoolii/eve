@@ -18,8 +18,10 @@
   "dependencies": {
     "@prisma/client": "^5.15.0",
     "axios": "^1.7.2",
+    "cheerio": "^1.0.0-rc.12",
     "dayjs": "^1.11.11",
     "dotenv": "^16.4.5",
+    "vm2": "^3.9.19",
     "winston": "^3.13.0"
   }
 }
