@@ -18,6 +18,10 @@ CRYPTO_COMPARE_API_KEY = ''
 
 ```
 
+```
+npx prisma migrate dev --name init
+```
+
 ### Reference
 
 - https://min-api.cryptocompare.com/
