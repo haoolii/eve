@@ -25,3 +25,8 @@ npx prisma migrate dev --name init
 ### Reference
 
 - https://min-api.cryptocompare.com/
+
+
+### TODO
+1. add error handle
+2. 

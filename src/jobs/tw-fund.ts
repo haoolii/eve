@@ -2,7 +2,7 @@ import axios from "axios";
 import cheerio from "cheerio";
 import Dayjs from "dayjs";
 import { VM } from "vm2";
-import db from "../../db";
+import db from "../db";
 
 const main = async () => {
   const response = await axios.get(
