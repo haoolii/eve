@@ -1,71 +1,48 @@
-import { NextFunction, Request, Response, Router } from "express";
+import { Router } from "express";
 import db from "../db";
-import { Decimal } from "@prisma/client/runtime/library";
 import dayjs from "dayjs";
-
-const adapter = (
-  records: {
-    coinId: string;
-    time: Date;
-    price: Decimal;
-    createdAt: Date;
-    updatedAt: Date;
-  }[]
-) => {
-  const output = [];
-  for (let i = 0; i < records.length; i++) {
-    const record = records[i];
-    output.push([dayjs(record.time).unix(), record.price, record.time]);
-  }
-  return output;
-};
 
 const router: Router = Router();
 
-router.get('/info', async ( req, res) => {
-// req.params
-res.send({
-    params: JSON.stringify(req.query),
-
-})
-})
-
-router.get("/", async (req: Request, res: Response, next: NextFunction) => {
+// records
+router.get("/records", async (req, res, next) => {
   try {
-    const { symbol } = req.query;
+    let symbol;
+
+    if (typeof req.query.symbol !== "undefined") {
+      symbol = req.query.symbol.toString();
+    }
 
     if (!symbol) {
-      throw new Error("Error");
+      return res.sendStatus(404);
     }
 
     const coinInfo = await db.coinInfo.findFirst({
-      where: { name: symbol.toString() },
+      where: { name: symbol },
     });
 
     if (!coinInfo) {
-      throw new Error("Error");
+      throw new Error("not found coin info");
     }
 
-    const coinRecords = await db.coinRecord.findMany({
+    const records = await db.coinRecord.findMany({
       where: {
         coinId: coinInfo.id,
       },
     });
 
     res.json({
-      code: 0,
-      message: "",
+      status: 0,
+      msg: "success",
       data: {
-        info: coinInfo,
-        records: adapter(coinRecords),
+        records: records.map((record) => [
+          dayjs(record.time).unix(),
+          record.price,
+        ]),
       },
     });
   } catch (err) {
-    res.json({
-      code: 404,
-      message: JSON.stringify(err),
-      data: null,
-    });
+    res.sendStatus(400);
   }
 });
 
