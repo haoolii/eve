@@ -17,9 +17,9 @@ const getQueryCoinList = () => {
   );
 };
 
-const getQueryCoinHistory = () => {
+const getQueryCoinHistory = (symbol: string) => {
   return axios.get(
-    `https://min-api.cryptocompare.com/data/v2/histoday?fsym=BTC&tsym=USD&limit=2000&api_key=${process.env.CRYPTO_COMPARE_API_KEY}`
+    `https://min-api.cryptocompare.com/data/v2/histoday?fsym=${symbol}&tsym=USD&limit=2000&api_key=${process.env.CRYPTO_COMPARE_API_KEY}`
   );
 };
 
@@ -49,26 +49,24 @@ const syncCoinList = async () => {
   }
 };
 
-const syncCoinRecord = async () => {
+const syncCoinRecord = async (name: string) => {
   try {
-    const btcInfo = await db.coinInfo.findFirst({ where: { name: "BTC" } });
-    console.log(btcInfo);
-    if (!btcInfo) return;
-    const response = await getQueryCoinHistory();
+    const coinInfo = await db.coinInfo.findFirst({ where: { name } });
+    if (!coinInfo) return;
+    const response = await getQueryCoinHistory(name);
     const data = response.data["Data"]["Data"] || [];
-    console.log(data);
 
     for (let i = 0; i < data.length; i++) {
       const record = data[i];
       await db.coinRecord.upsert({
         where: {
           coinId_time: {
-            coinId: btcInfo.id,
+            coinId: coinInfo.id,
             time: dayjs.unix(record.time).toISOString(),
           },
         },
         create: {
-          coinId: btcInfo.id,
+          coinId: coinInfo.id,
           time: dayjs.unix(record.time).toISOString(),
           price: record.close,
         },
@@ -77,9 +75,11 @@ const syncCoinRecord = async () => {
         },
       });
     }
+    console.log("Done");
   } catch (err) {
     console.log(err);
   }
 };
 
-export const execute = async () => {};
+// export const execute = async () => {};
+syncCoinRecord("ETH");

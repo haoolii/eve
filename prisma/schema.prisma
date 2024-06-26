@@ -45,3 +45,19 @@ model TwFundRecord {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt()
 }
+
+model TwStockInfo {
+  stockId         String   @unique
+  stockName       String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt()
+}
+
+model TwStockRecord {
+  stockId        String
+  time           DateTime
+  price          Decimal
+  @@id([stockId, time])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt()
+}

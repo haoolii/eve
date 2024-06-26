@@ -7,27 +7,27 @@ const router: Router = Router();
 // records
 router.get("/records", async (req, res, next) => {
   try {
-    let symbol;
+    let fundId;
 
-    if (typeof req.query.symbol !== "undefined") {
-      symbol = req.query.symbol.toString();
+    if (typeof req.query.fundId !== "undefined") {
+      fundId = req.query.fundId.toString();
     }
 
-    if (!symbol) {
+    if (!fundId) {
       return res.sendStatus(404);
     }
 
-    const coinInfo = await db.coinInfo.findFirst({
-      where: { name: symbol },
+    const fundInfo = await db.twFundInfo.findFirst({
+      where: { fundId },
     });
 
-    if (!coinInfo) {
+    if (!fundInfo) {
       throw new Error("not found coin info");
     }
 
-    const records = await db.coinRecord.findMany({
+    const records = await db.twFundRecord.findMany({
       where: {
-        coinId: coinInfo.id,
+        fundId: fundInfo.fundId,
       },
     });
 
@@ -41,7 +41,7 @@ router.get("/records", async (req, res, next) => {
         ]),
       },
     });
-  } catch (err) { 
+  } catch (err) {
     res.sendStatus(400);
   }
 });
