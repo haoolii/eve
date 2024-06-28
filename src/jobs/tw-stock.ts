@@ -1,7 +1,6 @@
 // https://fubon-ebrokerdj.fbs.com.tw/Z/ZC/ZCW/CZKC1.djbcd?a=2330&b=D&c=1
 
 import axios from "axios";
-import * as CSV from "csv-string";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import db from "../db";
@@ -112,7 +111,6 @@ const fetchTWSE = async (stock: string, dateString: string) => {
     `https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY_AVG?date=${dateString}&stockNo=${stock}&response=json`
   );
   const data = response?.data?.data || [];
-  console.log('data', data)
   let safeData = [];
   for (let i = 0; i < data.length; i++) {
     const datum = data[i];
@@ -124,11 +122,8 @@ const fetchTWSE = async (stock: string, dateString: string) => {
       });
     } catch (err) {
       console.log("err: ", err);
-      console.log('datum', datum)
-      console.log('^^^^^^^^^^^^');
     }
   }
-  console.log('safeData', safeData)
   return safeData;
 };
 
